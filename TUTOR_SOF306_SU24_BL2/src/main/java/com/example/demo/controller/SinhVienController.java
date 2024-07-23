@@ -1,7 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.SinhVien;
+import com.example.demo.reponse.SinhVien2Response;
+import com.example.demo.reponse.SinhVienResponse;
 import com.example.demo.repository.SinhVienRepository;
+import com.example.demo.request.SinhVienRequest;
 import org.hibernate.type.descriptor.java.LongJavaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,12 +23,12 @@ public class SinhVienController {
     private SinhVienRepository repository;
 
     @GetMapping("/hien-thi")
-    public List<SinhVien> hienThi(){
-        return repository.findAll();
+    public List<SinhVienResponse> hienThi(){
+        return repository.findAll1();
     }
 
     @GetMapping("/phan-trang")
-    public List<SinhVien> phanTrang(@RequestParam(value = "currentPage",
+    public List<SinhVien2Response> phanTrang(@RequestParam(value = "currentPage",
                                     defaultValue = "0") Integer currentPage){
         int pageSize = 5;
         Pageable pageable = PageRequest.of(currentPage,pageSize);
@@ -33,9 +36,16 @@ public class SinhVienController {
     }
 
     @PostMapping("/add")
-    public String add(@RequestBody SinhVien sinhVien){
-        SinhVien sv = repository.save(sinhVien);
-        if(sv != null){
+    public String add(@RequestBody SinhVienRequest sinhVien){
+
+        SinhVien sv = new SinhVien();
+        sv.setHoTen(sinhVien.getHoTen());
+        sv.setGioiTinh(sinhVien.getGioiTinh());
+        sv.setDiaChi(sinhVien.getDiaChi());
+        sv.setLop(sinhVien.getLop());
+
+        SinhVien sv1 = repository.save(sv);
+        if(sv1 != null){
             return "thêm sinh viên thành công";
         }
         return "thêm sinh viên thất bại";
